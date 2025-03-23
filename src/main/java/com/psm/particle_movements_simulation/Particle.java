@@ -1,9 +1,16 @@
 package com.psm.particle_movements_simulation;
 
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class Particle {
     Vector position;
     Vector velocity;
     public double mass;
+
 
     public Particle(Vector position, Vector velocity, double mass) {
         this.position = position;
@@ -13,7 +20,7 @@ public class Particle {
 
     public Vector acceleration(double t, Vector pos, Vector vel){
         //just gravity for now
-        return new Vector(0, -9.81 * mass);
+        return new Vector(0, 9.81 * mass);
     }
 
     public void move_using_rk4(double t, double dt){
@@ -41,6 +48,41 @@ public class Particle {
         velocity = newVelocity;
         position = newPosition;
 
+    }
+
+    public void move_using_euler(double t, double dt){
+        Vector acceleration = acceleration(t, position, velocity);
+        Vector newVelocity = velocity.add(acceleration.multiply(dt));
+        Vector newPosition = position.add(newVelocity.multiply(dt));
+        velocity = newVelocity;
+        position = newPosition;
+    }
+
+    public void draw(GraphicsContext gc){
+        gc.setFill(Color.web("ffffff"));
+        gc.fillOval(position.x, position.y, 5, 5);
+    }
+
+    public Vector calculateReactionToCollisionWithCircle(Circle circle, Particle particle){
+        Vector collisionNormal = particle.position.subtract(circle.position).normalize();
+
+        Vector v_normal = collisionNormal.multiply(velocity.dot(collisionNormal));
+        Vector v_tangent = velocity.subtract(v_normal);
+
+        //for e = 0.9 (coefficient of restitution)
+        return v_tangent.subtract(v_normal.multiply(0.9));
+    }
+
+    public static Vector calculateCollisionWithWall(Vector velocity, boolean vertical ) {
+        double restitution = 0.9;
+
+        if (vertical) {
+            // Для вертикальной стены отражаем x-компоненту
+            return new Vector(-velocity.x * restitution, velocity.y);
+        } else {
+            // Для горизонтальной стены отражаем y-компоненту
+            return new Vector(velocity.x, -velocity.y * restitution);
+        }
     }
 
 }
