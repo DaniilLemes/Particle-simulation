@@ -8,7 +8,5 @@ public class ControlPane extends VBox {
         super();
         setWidth(800);
         setHeight(100);
-        Button startButton = new Button("Start");
-        startButton.getStyleClass().add("start-button");
     }
 }

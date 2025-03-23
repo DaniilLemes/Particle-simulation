@@ -9,7 +9,6 @@ import javafx.scene.layout.VBox;
 
 
 public class Controller {
-
     @FXML
     private Pane particlePane;
 
