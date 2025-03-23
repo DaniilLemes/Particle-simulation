@@ -7,4 +7,6 @@ module com.psm.particle_movements_simulation {
 
     opens com.psm.particle_movements_simulation to javafx.fxml;
     exports com.psm.particle_movements_simulation;
+    exports com.psm.particle_movements_simulation.controller;
+    opens com.psm.particle_movements_simulation.controller to javafx.fxml;
 }
