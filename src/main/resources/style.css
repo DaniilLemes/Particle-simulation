@@ -1,20 +1,31 @@
+/* Control Pane Style */
 .control-pane {
-    -fx-background-color: #000000;
-    -fx-padding: 20px 40px;
+    -fx-background-color: linear-gradient(to bottom, #1c1c1c, #000000);
+    -fx-padding: 25px 40px;
     -fx-alignment: center;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.75), 10, 0.5, 0, 2);
 }
 
-.start-button{
+/* Start Button Style */
+.start-button {
     -fx-font-size: 20px;
-    -fx-background-color: none;
-    -fx-text-fill: #ceb65b;
-    -fx-border-color: #ceb65b;
-    -fx-border-width: 1px;
+    -fx-background-color: linear-gradient(to bottom, #f7c16c, #d4a64e);
+    -fx-text-fill: #ffffff;
+    -fx-border-color: transparent;
+    -fx-border-width: 0px;
     -fx-padding: 10px 50px;
     -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 4, 0, 0, 2);
 }
 
-.particle-space{
-    -fx-background-color: #f0f0f0;
+.start-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #ffd27f, #f7b05a);
+}
+
+/* Particle Space Style */
+.particle-space {
+    -fx-background-color: linear-gradient(to bottom, #e0e0e0, #ffffff);
     -fx-padding: 20px;
+    -fx-border-color: #ccc;
+    -fx-border-width: 2px;
 }

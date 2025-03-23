@@ -175,5 +175,15 @@ public class ParticleSpace extends Canvas {
     public static void setAlgorithm(String selectedAlgorithm) {
         ParticleSpace.algorithm = Algorithm.valueOf(selectedAlgorithm);
     }
+
+    public void restart() {
+        // Reinitialize the simulation with new parameters
+        initParticles();
+    }
+
+    public static String getAlgorithm() {
+        return algorithm.toString();
+    }
+
 }
 

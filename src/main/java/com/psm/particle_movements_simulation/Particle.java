@@ -146,4 +146,23 @@ public class Particle {
         initialVelocity = initVel;
     }
 
+    public double getMass() {
+        return mass;
+    }
+
+    public static String getEnvironment() {
+        return environment;
+    }
+
+    public static boolean isGravityEnabled() {
+        return gravityEnabled;
+    }
+
+    public static double getDefaultWeight() {
+        return defaultWeight;
+    }
+
+    public static double getInitialVelocity() {
+        return initialVelocity;
+    }
 }
