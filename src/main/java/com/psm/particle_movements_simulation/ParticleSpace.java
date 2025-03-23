@@ -6,6 +6,8 @@ import javafx.scene.paint.Color;
 
 public class ParticleSpace extends Canvas {
 
+
+
     public ParticleSpace() {
         super(800, 500);
         this.getStyleClass().add("particle-space");
