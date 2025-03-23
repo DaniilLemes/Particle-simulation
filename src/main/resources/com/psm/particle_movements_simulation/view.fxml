@@ -14,7 +14,7 @@
         <HBox spacing="100" alignment="CENTER">
             <Button fx:id="startButton" text="Start" styleClass="start-button"/>
             <Button fx:id="simualionOptionsButton" accessibleHelp="Simulation Options" text="Options"
-                    styleClass="start-button"/>
+                    styleClass="start-button" onAction="#showOptions"/>
         </HBox>
     </VBox>
 </AnchorPane>

@@ -14,6 +14,7 @@ import java.util.concurrent.Executors;
 
 public class ParticleSpace extends Canvas {
 
+    private static Algorithm algorithm = Algorithm.RK4;
     private final Circle[] circles = new Circle[]{
             new Circle(new Vector(390, 200), 50),
             new Circle(new Vector(0, 0), 45),
@@ -27,7 +28,7 @@ public class ParticleSpace extends Canvas {
     );
 
     ArrayList<Particle> particles;
-    private static final int ParticleCount = 5;
+    private static final int ParticleCount = 20;
 
     public ParticleSpace() {
         super(800, 500);
@@ -46,11 +47,11 @@ public class ParticleSpace extends Canvas {
 
     public void initParticles(){
         GraphicsContext gc = this.getGraphicsContext2D();
-        gc.setFill(Color.web("424242"));
+        gc.setFill(Color.web("ceb65b"));
         gc.fillRect(0, 0, getWidth(), getHeight());
 
         for (Circle circle : circles) {
-            gc.setFill(Color.web("ffffff"));
+            gc.setFill(Color.web("ceb65b"));
             gc.fillOval(circle.position.x, circle.position.y, circle.radius * 2, circle.radius * 2);
         }
 
@@ -73,18 +74,49 @@ public class ParticleSpace extends Canvas {
         for (Particle particle : particles) {
             tasks.add(() -> {
                 Circle circle = checkCollisionWithCircles(particle);
-                if (circle != null){
-                    particle.velocity = particle.calculateReactionToCollisionWithCircle(circle, particle);
+                if (circle != null) {
+                    // Вычисляем центр круга и нормаль столкновения (направление от центра к частице)
+                    Vector circleCenter = new Vector(circle.position.x + circle.radius, circle.position.y + circle.radius);
+                    Vector collisionDir = particle.position.subtract(circleCenter).normalize();
+
+                    // Задаем небольшой запас для коррекции (epsilon)
+                    double epsilon = 1.0; // можно настроить в зависимости от масштаба и dt
+
+                    // Перемещаем частицу за границу круга
+                    particle.position = circleCenter.add(collisionDir.multiply(circle.radius + epsilon));
+
+                    // Рассчитываем новую скорость после столкновения
+                    Vector newVelocity = particle.calculateReactionToCollisionWithCircle(circle, particle);
+
+                    // Добавляем импульс отталкивания вдоль нормали, чтобы избежать повторного столкновения
+                    newVelocity = newVelocity.add(collisionDir.multiply(epsilon));
+
+                    particle.velocity = newVelocity;
                 }
-                if (checkCollisionWithVerticalWalls(particle)){
+                if (checkCollisionWithVerticalWalls(particle)) {
+                    // Корректируем позицию для вертикальных стен
+                    if(particle.position.x <= 0)
+                        particle.position.x = 0;
+                    else if(particle.position.x >= getWidth())
+                        particle.position.x = getWidth();
+
                     particle.velocity = Particle.calculateCollisionWithWall(particle.velocity, true);
                 }
-                if (checkCollisionWithHorizontalWalls(particle)){
+                if (checkCollisionWithHorizontalWalls(particle)) {
+                    // Корректируем позицию для горизонтальных стен
+                    if(particle.position.y <= 0)
+                        particle.position.y = 0;
+                    else if(particle.position.y >= getHeight())
+                        particle.position.y = getHeight();
+
                     particle.velocity = Particle.calculateCollisionWithWall(particle.velocity, false);
                 }
+                // Обновляем положение частицы методом Рунге–Кутты
                 particle.move_using_rk4(0, 0.1);
                 return null;
             });
+
+
         }
 
         try{
@@ -115,13 +147,17 @@ public class ParticleSpace extends Canvas {
 
     public Circle checkCollisionWithCircles(Particle particle){
         for (Circle circle : circles) {
-            double distance = particle.position.subtract(circle.position).length();
-            if (distance < circle.radius){
+            // Вычисляем центр круга (предполагается, что circle.position хранит верхний левый угол)
+            Vector circleCenter = new Vector(circle.position.x + circle.radius, circle.position.y + circle.radius);
+            double distance = particle.position.subtract(circleCenter).length();
+            if (distance < circle.radius) {
                 return circle;
             }
         }
         return null;
     }
+
+
 
     public boolean checkCollisionWithVerticalWalls(Particle particle){
         return particle.position.x <= 0 || particle.position.x >= getWidth();
@@ -134,6 +170,10 @@ public class ParticleSpace extends Canvas {
     // Shutdown the executor service when appropriate (e.g., on application exit)
     public void shutdown() {
         executorService.shutdown();
+    }
+
+    public static void setAlgorithm(String selectedAlgorithm) {
+        ParticleSpace.algorithm = Algorithm.valueOf(selectedAlgorithm);
     }
 }
 
