@@ -12,6 +12,8 @@ public class OptionsScene {
         VBox layout = new VBox(15);
         layout.setPadding(new Insets(20));
 
+        layout.getStyleClass().add("options-dialog");
+
         // Retrieve current simulation settings
         String currentAlgorithm = ParticleSpace.getAlgorithm();
         String currentEnvironment = Particle.getEnvironment();
