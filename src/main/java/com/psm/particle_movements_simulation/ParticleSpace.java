@@ -37,9 +37,41 @@ public class ParticleSpace extends Canvas {
 
         // Запуск автоматического обновления частиц через AnimationTimer
         AnimationTimer timer = new AnimationTimer() {
+
+            private long previouseTime = 0;
+            private double deltaTime = 0.1; //seconds
+            private int accumulator = 0;
+
             @Override
             public void handle(long now) {
-                updateParticles();
+
+                if(previouseTime == 0){
+                    previouseTime = now;
+                    return;
+                }
+
+                double frameTime = (now - previouseTime) / 1_000_000_000.0;
+                previouseTime = now;
+                accumulator += frameTime;
+
+                while(accumulator >= deltaTime){
+                    updateParticles();
+                    accumulator -= deltaTime;
+                }
+
+                Platform.runLater(() -> {
+                    GraphicsContext gc = getGraphicsContext2D();
+                    gc.setFill(Color.web("424242"));
+                    gc.fillRect(0, 0, getWidth(), getHeight());
+                    for (Circle circle : circles) {
+                        gc.setFill(Color.web("ffffff"));
+                        gc.fillOval(circle.position.x, circle.position.y, circle.radius * 2, circle.radius * 2);
+                    }
+                    for (Particle particle : particles) {
+                        particle.draw(gc);
+                    }
+                });
+
             }
         };
         timer.start();
